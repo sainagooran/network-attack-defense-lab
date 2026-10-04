@@ -50,9 +50,9 @@ The network has the following logical structure:
 
 The switch separates the devices using VLANs, while the router handles communication between different networks.
 
-The topology image is available here:
+### Network Topology
 
-topology/network-topology.png
+![Network Topology](topology/network-topology.png)
 
 VLAN Design
 
