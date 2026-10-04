@@ -1,12 +1,9 @@
+```markdown
 # Network Attack & Defense Lab
 
 A small network security lab built with Cisco Packet Tracer.
 
-This project demonstrates how network segmentation and ACLs can be us# Network Attack & Defense Lab
-
-A small network security lab built with Cisco Packet Tracer.
-
-This project was created as a hands-on networking and cybersecurity project. The main goal was to build a small organizational network, separate different types of devices using VLANs, test network access, and use an Access Control List (ACL) to block unauthorized traffic.
+This project was created as a hands-on networking and cybersecurity project. The main goal was to build a small organizational network, separate different types of devices using VLANs, test network access, and use an Access Control List (ACL) to control unauthorized traffic.
 
 ## Project Overview
 
@@ -19,7 +16,7 @@ The network represents a small organization with four different network segments
 
 The project was built in Cisco Packet Tracer using a Cisco 2911 router and a Cisco 2960 switch.
 
-I first configured the network and tested the connectivity between the different VLANs. At this stage, the Unauthorized-PC was able to reach the Web-Server.
+I first configured the network and tested connectivity between the different VLANs. At this stage, the Unauthorized-PC was able to reach the Web-Server.
 
 After confirming that the basic network connectivity was working, I added an extended ACL to restrict traffic coming from the untrusted network.
 
@@ -44,61 +41,70 @@ The network has the following logical structure:
        |              |              |               |
    Employee-1     Web-Server      Admin-PC      Unauthorized-PC
    Employee-2     DNS-Server
-   Employee-3ed to control access between different parts of a network.
+   Employee-3
+```
 
-   The router uses router-on-a-stick configuration to provide communication between the VLANs.
+![Network Topology](./topology/network-topology.png)
 
-The switch separates the devices using VLANs, while the router handles communication between different networks.
-
-### Network Topology
-
-![Network Topology](topology/network-topology.png)
-
-VLAN Design
+## VLAN Design
 
 The network is divided into four VLANs:
 
-VLAN	Name	Network	Purpose
-10	EMPLOYEES	192.168.10.0/24	Employee devices
-20	SERVERS	192.168.20.0/24	Web and DNS servers
-30	ADMIN	192.168.30.0/24	Administrator device
-40	UNTRUSTED	192.168.40.0/24	Untrusted device
+| VLAN | Name      | Network          | Purpose              |
+|------|-----------|------------------|----------------------|
+| 10   | EMPLOYEES | 192.168.10.0/24  | Employee devices     |
+| 20   | SERVERS   | 192.168.20.0/24  | Web and DNS servers  |
+| 30   | ADMIN     | 192.168.30.0/24  | Administrator device |
+| 40   | UNTRUSTED | 192.168.40.0/24  | Untrusted device     |
 
-Using separate VLANs makes it possible to logically separate different types of devices and apply different access rules between them.
-
-Devices
+## Devices
 
 The lab contains:
 
-1 Cisco 2911 Router
-1 Cisco 2960 Switch
-3 Employee PCs
-1 Admin PC
-1 Unauthorized PC
-1 Web Server
-1 DNS Server
-IP Addressing
-VLAN 10 - Employees
-Device	IP Address	Default Gateway
-Employee-1	192.168.10.10	192.168.10.1
-Employee-2	192.168.10.11	192.168.10.1
-Employee-3	192.168.10.12	192.168.10.1
-VLAN 20 - Servers
-Device	IP Address	Default Gateway
-Web-Server	192.168.20.10	192.168.20.1
-DNS-Server	192.168.20.11	192.168.20.1
-VLAN 30 - Administration
-Device	IP Address	Default Gateway
-Admin-PC	192.168.30.10	192.168.30.1
-VLAN 40 - Untrusted
-Device	IP Address	Default Gateway
-Unauthorized-PC	192.168.40.10	192.168.40.1
-Router-on-a-Stick Configuration
+- 1 Cisco 2911 Router
+- 1 Cisco 2960 Switch
+- 3 Employee PCs
+- 1 Admin PC
+- 1 Unauthorized PC
+- 1 Web Server
+- 1 DNS Server
+
+## IP Addressing
+
+### VLAN 10 - Employees
+
+| Device      | IP Address      | Default Gateway |
+|-------------|-----------------|-----------------|
+| Employee-1  | 192.168.10.10   | 192.168.10.1    |
+| Employee-2  | 192.168.10.11   | 192.168.10.1    |
+| Employee-3  | 192.168.10.12   | 192.168.10.1    |
+
+### VLAN 20 - Servers
+
+| Device      | IP Address      | Default Gateway |
+|-------------|-----------------|-----------------|
+| Web-Server  | 192.168.20.10   | 192.168.20.1    |
+| DNS-Server  | 192.168.20.11   | 192.168.20.1    |
+
+### VLAN 30 - Administration
+
+| Device    | IP Address     | Default Gateway |
+|-----------|----------------|-----------------|
+| Admin-PC  | 192.168.30.10  | 192.168.30.1    |
+
+### VLAN 40 - Untrusted
+
+| Device            | IP Address     | Default Gateway |
+|-------------------|----------------|-----------------|
+| Unauthorized-PC   | 192.168.40.10  | 192.168.40.1    |
+
+## Router-on-a-Stick Configuration
 
 The connection between the router and the switch is configured as a trunk.
 
 The router uses subinterfaces for the four VLANs:
 
+```text
 interface GigabitEthernet0/0.10
  encapsulation dot1Q 10
  ip address 192.168.10.1 255.255.255.0
@@ -114,202 +120,194 @@ interface GigabitEthernet0/0.30
 interface GigabitEthernet0/0.40
  encapsulation dot1Q 40
  ip address 192.168.40.1 255.255.255.0
+```
 
 This configuration allows the router to route traffic between the different VLANs.
 
-Switch Configuration
+## Switch Configuration
 
-The switch uses access ports for the end devices and a trunk port for the router.
+The switch was configured with four VLANs:
 
-The main port assignments are:
+```text
+VLAN 10 - EMPLOYEES
+VLAN 20 - SERVERS
+VLAN 30 - ADMIN
+VLAN 40 - UNTRUSTED
+```
 
-Fa0/1  - Trunk - Router
+The switch ports were assigned as follows:
 
-Fa0/2  - VLAN 10 - Employee-1
-Fa0/3  - VLAN 10 - Employee-2
-Fa0/4  - VLAN 10 - Employee-3
+| Port  | Device           | VLAN |
+|-------|------------------|------|
+| Fa0/1 | Router           | Trunk |
+| Fa0/2 | Employee-1       | 10 |
+| Fa0/3 | Employee-2       | 10 |
+| Fa0/4 | Employee-3       | 10 |
+| Fa0/5 | Admin-PC         | 30 |
+| Fa0/6 | Unauthorized-PC  | 40 |
+| Fa0/7 | Web-Server       | 20 |
+| Fa0/8 | DNS-Server       | 20 |
 
-Fa0/5  - VLAN 30 - Admin-PC
+The router connection on Fa0/1 is configured as a trunk:
 
-Fa0/6  - VLAN 40 - Unauthorized-PC
+```text
+interface FastEthernet0/1
+ switchport mode trunk
+```
 
-Fa0/7  - VLAN 20 - Web-Server
-Fa0/8  - VLAN 20 - DNS-Server
+## Security Scenario
 
-The complete switch configuration is available in:
+The Unauthorized-PC represents a device that should not have access to sensitive network segments.
 
-configs/switch-config.txt
+Before applying any access control, the device was able to communicate with the Web-Server.
 
-The router configuration is available in:
+For example:
 
-configs/router-config.txt
-
-Security Scenario
-
-The main security scenario is an unauthorized device trying to access internal resources.
-
-The Unauthorized-PC belongs to VLAN 40 and represents a device that should not have access to sensitive internal networks.
-
-Before applying any ACL, I tested the connection from the Unauthorized-PC to the Web-Server.
-
+```text
 Unauthorized-PC
 192.168.40.10
        |
        |
-       v
+192.168.40.1
+       |
+     Router
+       |
+192.168.20.1
+       |
 Web-Server
 192.168.20.10
+```
 
-The ping was successful.
+The successful ping showed that the network was allowing communication between the untrusted VLAN and the server VLAN.
 
-This showed that the basic routing between the VLANs was working, but there was no access restriction preventing the untrusted device from reaching the server network.
+This gave me a simple baseline before applying the security rule.
 
-At this point, I added an extended ACL to control the traffic.
+## ACL Configuration
 
-Access Control List
+I created an extended ACL on the router to block traffic from the untrusted network to the server and admin networks.
 
-The ACL was designed to block traffic from the untrusted network to the server and admin networks.
-
+```text
 access-list 140 deny ip 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255
 access-list 140 deny ip 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
 access-list 140 permit ip any any
+```
 
-The ACL was applied inbound on the VLAN 40 subinterface:
+The ACL was applied inbound on the VLAN 40 router subinterface:
 
+```text
 interface GigabitEthernet0/0.40
  ip access-group 140 in
+```
 
-The first rule blocks traffic from VLAN 40 to the server network.
+The first rule blocks traffic from the untrusted network to the server network.
 
-The second rule blocks traffic from VLAN 40 to the admin network.
+The second rule blocks traffic from the untrusted network to the admin network.
 
-The final rule allows other traffic that is not specifically blocked.
+The final rule allows other traffic that is not specifically blocked by the ACL.
 
-Connectivity Testing
+## Connectivity Testing
 
 I tested the network before and after applying the ACL.
 
-1. Unauthorized-PC → Web-Server
+### Before Applying the ACL
 
-Source:
+#### Unauthorized-PC → Web-Server
 
-192.168.40.10
+Source: `192.168.40.10`
 
-Destination:
+Destination: `192.168.20.10`
 
-192.168.20.10
-
-Before ACL
-
-Result: Successful
+Result: **Successful**
 
 The Unauthorized-PC was able to reach the Web-Server.
 
-This confirmed that the untrusted network could access the server network before the access control rule was applied.
+This showed that, before adding the ACL, devices in the untrusted VLAN could access the server network.
 
-After ACL
+### After Applying the ACL
 
-Result: Blocked
+#### Unauthorized-PC → Web-Server
 
-Packet loss: 100%
+Result: **Blocked**
 
-The Unauthorized-PC received:
+Packet loss: **100%**
 
-Reply from 192.168.40.1: Destination host unreachable.
+The ACL blocked traffic from the untrusted VLAN to the server VLAN.
 
-This confirmed that the ACL was preventing access from VLAN 40 to the server network.
+#### Unauthorized-PC → Admin-PC
 
-2. Unauthorized-PC → Admin-PC
+Result: **Blocked**
 
-Source:
+Packet loss: **100%**
 
-192.168.40.10
+The ACL also prevented the unauthorized device from reaching the admin network.
 
-Destination:
+#### Employee-1 → Web-Server
 
-192.168.30.10
+Result: **Successful**
 
-Result: Blocked
+Packet loss: **0%**
 
-Packet loss: 100%
+Employee traffic to the server was still working after the ACL was applied.
 
-This confirmed that the second ACL rule was also working and the Unauthorized-PC could not reach the admin network.
+#### Admin-PC → Web-Server
 
-3. Employee-1 → Web-Server
+Result: **Successful**
 
-Source:
+Packet loss: **0%**
 
-192.168.10.10
+The admin device could still communicate with the Web-Server.
 
-Destination:
+## Test Results
 
-192.168.20.10
+| Source            | Destination | Before ACL | After ACL |
+|-------------------|-------------|------------|-----------|
+| Unauthorized-PC   | Web-Server  | Allowed    | Blocked   |
+| Unauthorized-PC   | Admin-PC    | Allowed    | Blocked   |
+| Employee-1        | Web-Server  | Allowed    | Allowed   |
+| Admin-PC          | Web-Server  | Allowed    | Allowed   |
 
-Result: Successful
+These tests show that the ACL was working as intended for the traffic that I wanted to restrict.
 
-Packet loss: 0%
+## Before and After
 
-This was an important test because the ACL should not prevent normal employee access to the server.
+### Before ACL
 
-The Employee-1 device was still able to reach the Web-Server after the ACL was applied.
+The Unauthorized-PC could reach the Web-Server.
 
-4. Admin-PC → Web-Server
-
-Source:
-
-192.168.30.10
-
-Destination:
-
-192.168.20.10
-
-Result: Successful
-
-This confirmed that the admin network could still communicate with the server network.
-
-Test Results
-Source	Destination	Result
-Employee-1	Web-Server	Allowed
-Admin-PC	Web-Server	Allowed
-Unauthorized-PC	Web-Server	Blocked
-Unauthorized-PC	Admin-PC	Blocked
-
-The tests confirmed that the ACL was working as intended.
-
-Before and After
-Before Applying the ACL
-
-The Unauthorized-PC could access the Web-Server:
-
+```text
 Unauthorized-PC
-192.168.40.10
        |
-       | Allowed
        v
-Web-Server
-192.168.20.10
-After Applying the ACL
-
-The same traffic was blocked:
-
-Unauthorized-PC
-192.168.40.10
+    Router
        |
+       v
+  Web-Server
+
+     ALLOWED
+```
+
+### After ACL
+
+The Unauthorized-PC could no longer reach the Web-Server or Admin-PC.
+
+```text
+Unauthorized-PC
+       |
+       v
+    Router
        X
        |
-Web-Server
-192.168.20.10
-
-At the same time, legitimate employee access was still allowed:
-
-Employee-1
-192.168.10.10
-       |
-       | Allowed
        v
-Web-Server
-192.168.20.10
-Project Structure
+Web-Server / Admin-PC
+
+     BLOCKED
+```
+
+At the same time, legitimate traffic from the Employee and Admin networks continued to work.
+
+## Project Structure
+
+```text
 network-attack-defense-lab/
 │
 ├── README.md
@@ -326,59 +324,86 @@ network-attack-defense-lab/
 │
 └── packet-tracer/
     └── network-attack-defense-lab.pkt
-Tools Used
-Cisco Packet Tracer
-Cisco IOS CLI
-VLANs
-Router-on-a-Stick
-Extended ACLs
-Git
-GitHub
-Markdown
-What I Learned
+```
 
-This project helped me understand how VLANs, inter-VLAN routing, and ACLs work together in a small network.
+## Files
 
-One of the useful parts of the project was testing the network before applying the ACL. The network was fully connected, but that did not mean that every device should be allowed to communicate with every other device.
+### `network-topology.png`
 
-The ACL provided a simple way to control traffic based on the source and destination networks.
+A screenshot of the final Packet Tracer topology.
 
-I also practiced basic Cisco IOS configuration, including router subinterfaces, trunk ports, VLAN assignments, and access control rules.
+### `router-config.txt`
 
-Another thing I learned from the project was the importance of testing both blocked and allowed traffic. It is not enough to confirm that unauthorized traffic is blocked; legitimate traffic should also continue to work after a security rule is introduced.
+The running configuration of the Cisco 2911 router.
 
-Limitations
+### `switch-config.txt`
 
-This project is a simulated lab created in Cisco Packet Tracer, so it does not represent a complete production network.
+The running configuration of the Cisco 2960 switch.
 
-The unauthorized access scenario is also simulated using connectivity tests such as ping. It is not a real penetration test or exploitation of a vulnerable system.
+### `connectivity-tests.md`
 
-The project mainly focuses on network segmentation, inter-VLAN routing, and basic traffic control using ACLs.
+The connectivity tests performed before and after applying the ACL.
 
-Future Improvements
+### `network-attack-defense-lab.pkt`
 
-Some possible improvements for a future version of this lab include:
+The Cisco Packet Tracer project file containing the complete network lab.
 
-Adding DHCP for automatic IP configuration
-Adding a dedicated management VLAN
-Adding more network services
-Adding more detailed traffic monitoring
-Testing additional ACL rules
-Adding logging for denied traffic
-Using multiple switches
-Building a larger organizational network
-Conclusion
+## Tools Used
 
-This project demonstrates a simple approach to improving security in a small organizational network.
+- Cisco Packet Tracer
+- Cisco IOS CLI
+- VLANs
+- Router-on-a-Stick
+- Extended ACLs
+- IPv4
+- Git
+- GitHub
+- Markdown
 
-The network was first divided into separate VLANs and configured with inter-VLAN routing. After testing the initial connectivity, an extended ACL was added to restrict traffic from the untrusted network.
+## What I Learned
 
-The final tests showed that unauthorized access to the server and admin networks was blocked, while legitimate employee and admin access was still working.
+Through this project, I practiced several networking and security concepts.
 
-The main idea I took from this project is that network security is not only about detecting attacks. Good network segmentation and access control can also reduce the amount of access an unauthorized device has in the first place.
+I learned how to create VLANs and assign switch ports to different network segments.
 
-Author
+I also learned how router-on-a-stick works and how a router can provide communication between multiple VLANs using subinterfaces.
+
+Another important part of the project was understanding how ACLs can be used to control traffic between different networks.
+
+The before-and-after tests helped me understand the effect of an ACL more clearly because I could see the same traffic being allowed before the rule and blocked after applying it.
+
+## Limitations
+
+This project is a simulated network lab created in Cisco Packet Tracer.
+
+The unauthorized access scenario is simulated using an Unauthorized-PC. It is not a real penetration test or a real-world attack.
+
+The ACL only blocks the specific traffic defined in the rules. It does not provide complete protection against every possible type of unauthorized network activity.
+
+## Future Improvements
+
+Some possible improvements for this project would be:
+
+- Add more ACL rules for different types of traffic.
+- Add DHCP instead of manually assigning IP addresses.
+- Configure the DNS server and test name resolution.
+- Add a firewall between the internal network and the Internet.
+- Add logging and monitoring for blocked traffic.
+- Add more realistic attack scenarios in a controlled lab environment.
+
+## Conclusion
+
+This project helped me understand how basic network segmentation and access control can improve the security of a small organization.
+
+I started with a working network where the Unauthorized-PC could reach the Web-Server. I then separated the network using VLANs and applied an extended ACL to restrict access from the untrusted network.
+
+The final tests showed that the unauthorized traffic was blocked while legitimate employee and administrator traffic continued to work.
+
+Overall, this project gave me practical experience with VLANs, inter-VLAN routing, ACLs, network troubleshooting, and basic network security concepts.
+
+## Author
+
+**Saina Gooran**
 
 Computer Engineering Student
-
-This project was created as a hands-on networking and cybersecurity project for my technical portfolio.
+```
